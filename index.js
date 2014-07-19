@@ -150,11 +150,12 @@ Hbs.prototype.middleware = function(options) {
 Hbs.prototype.createRenderer = function() {
   var hbs = this;
 
-  return function *(tpl, locals) {
+  return function *(tpl, locals, templateOptions) {
     var tplPath = path.join(hbs.viewPath, tpl + hbs.extname),
       template, rawTemplate, layoutTemplate;
 
     locals = merge(hbs.locals, locals || {});
+    templateOptions = merge(hbs.templateOptions, templateOptions || {});
 
     // Initialization... move these actions into another function to remove
     // unnecessary checks
@@ -183,8 +184,8 @@ Hbs.prototype.createRenderer = function() {
     layoutTemplate = hbs.cache[tpl].layoutTemplate || hbs.layoutTemplate;
 
     // Run the compiled templates
-    locals.body = template(locals, hbs.templateOptions);
-    this.body = layoutTemplate(locals, hbs.templateOptions);
+    locals.body = template(locals, templateOptions);
+    this.body = layoutTemplate(locals, templateOptions);
   };
 }
 
