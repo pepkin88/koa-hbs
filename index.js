@@ -100,6 +100,7 @@ Hbs.prototype.configure = function (options) {
   this.defaultLayout = options.defaultLayout || '';
   this.layoutsPath = options.layoutsPath || '';
   this.locals = options.locals || {};
+  this.disableTemplateCaching = options.disableTemplateCaching;
 
   this.partialsRegistered = false;
 
@@ -156,6 +157,12 @@ Hbs.prototype.createRenderer = function() {
 
     locals = merge(hbs.locals, locals || {});
     templateOptions = merge(hbs.templateOptions, templateOptions || {});
+
+    // conditionally clear cache
+    if (hbs.disableTemplateCaching) hbs.cache = {};
+
+    // clear blocks
+    hbs.blocks = {};
 
     // Initialization... move these actions into another function to remove
     // unnecessary checks
@@ -326,7 +333,5 @@ Hbs.prototype.block = function(name) {
   // val = block.toString
   var val = (this.blocks[name] || []).join('\n');
 
-  // clear the block
-  this.blocks[name] = [];
   return val;
 }
