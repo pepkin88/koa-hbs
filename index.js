@@ -177,12 +177,15 @@ Hbs.prototype.createRenderer = function() {
       rawTemplate = yield read(tplPath);
       hbs.cache[tpl] = {
         template: hbs.handlebars.compile(rawTemplate)
-      }
+      };
 
       // Load layout if specified
       if(rLayoutPattern.test(rawTemplate)) {
         var layout = rLayoutPattern.exec(rawTemplate)[1];
         var rawLayout = yield hbs.loadLayoutFile(layout);
+        if (!hbs.cache[tpl]) hbs.cache[tpl] = {
+          template: hbs.handlebars.compile(rawTemplate)
+        };
         hbs.cache[tpl].layoutTemplate = hbs.handlebars.compile(rawLayout);
       }
     }
