@@ -161,9 +161,6 @@ Hbs.prototype.createRenderer = function() {
     // conditionally clear cache
     if (hbs.disableTemplateCaching) hbs.cache = {};
 
-    // clear blocks
-    hbs.blocks = {};
-
     // Initialization... move these actions into another function to remove
     // unnecessary checks
     if((!hbs.partialsRegistered || hbs.disableTemplateCaching) && hbs.partialsPath !== '')
@@ -192,6 +189,9 @@ Hbs.prototype.createRenderer = function() {
 
     template = hbs.cache[tpl].template;
     layoutTemplate = hbs.cache[tpl].layoutTemplate || hbs.layoutTemplate;
+
+    // clear blocks, right before executing templates
+    hbs.blocks = {};
 
     // Run the compiled templates
     locals.body = template(locals, templateOptions);
