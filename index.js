@@ -161,9 +161,6 @@ Hbs.prototype.createRenderer = function() {
     // conditionally clear cache
     if (hbs.disableTemplateCaching) hbs.cache = {};
 
-    // clear blocks
-    hbs.blocks = {};
-
     // Initialization... move these actions into another function to remove
     // unnecessary checks
     if((!hbs.partialsRegistered || hbs.disableTemplateCaching) && hbs.partialsPath !== '')
@@ -175,14 +172,21 @@ Hbs.prototype.createRenderer = function() {
     // Load the template
     if(!hbs.cache[tpl]) {
       rawTemplate = yield read(tplPath);
+      var isLayoutSpecified = rLayoutPattern.test(rawTemplate);
+      // Load layout if specified
+      if (isLayoutSpecified) {
+        var layout = rLayoutPattern.exec(rawTemplate)[1];
+        var rawLayout = yield hbs.loadLayoutFile(layout);
+      }
+
+      // all yields before clearing blocks
+      hbs.blocks = {};
+
       hbs.cache[tpl] = {
         template: hbs.handlebars.compile(rawTemplate)
       };
 
-      // Load layout if specified
-      if(rLayoutPattern.test(rawTemplate)) {
-        var layout = rLayoutPattern.exec(rawTemplate)[1];
-        var rawLayout = yield hbs.loadLayoutFile(layout);
+      if (isLayoutSpecified) {
         if (!hbs.cache[tpl]) hbs.cache[tpl] = {
           template: hbs.handlebars.compile(rawTemplate)
         };
