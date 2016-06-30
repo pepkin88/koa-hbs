@@ -177,8 +177,8 @@ Hbs.prototype.createRenderer = function() {
       };
 
       // Load layout if specified
-      if(rLayoutPattern.test(rawTemplate)) {
-        var layout = rLayoutPattern.exec(rawTemplate)[1];
+      if(templateOptions.layout || rLayoutPattern.test(rawTemplate)) {
+        var layout = templateOptions.layout || rLayoutPattern.exec(rawTemplate)[1];
         var rawLayout = yield hbs.loadLayoutFile(layout);
         if (!hbs.cache[tpl]) hbs.cache[tpl] = {
           template: hbs.handlebars.compile(rawTemplate)
